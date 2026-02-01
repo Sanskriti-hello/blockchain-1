@@ -1,7 +1,7 @@
 class Mempool:
     def __init__(self, max_size=50):
-        self.transactions = []          # Store transactions
-        self.spent_utxos = set()         # Track UTXOs spent in mempool
+        self.transactions = []          
+        self.spent_utxos = set()        
         self.max_size = max_size
 
     def add_transaction(self, tx, utxo_manager) -> (bool, str):
@@ -10,7 +10,7 @@ class Mempool:
         Return (success, message)
         """
 
-        # 1. Mempool size check
+       
         if len(self.transactions) >= self.max_size:
             lowest_fee_tx = min(self.transactions, key=lambda t: t.fee)
             if tx.fee <= lowest_fee_tx.fee:
@@ -18,20 +18,20 @@ class Mempool:
             self.remove_transaction(lowest_fee_tx.tx_id)
 
 
-        # 2. Transaction validity check (UTXO existence, signatures, etc.)
+       
         if not tx.is_valid(utxo_manager):
             return False, "Invalid transaction"
 
-        # 3. Check for double-spending inside mempool
+       
         for tx_input in tx.inputs:
             utxo = (tx_input.prev_tx_id, tx_input.output_index)
             if utxo in self.spent_utxos:
                 return False, "UTXO already spent in mempool"
 
-        # 4. Add transaction
+       
         self.transactions.append(tx)
 
-        # 5. Mark UTXOs as spent
+      
         for tx_input in tx.inputs:
             utxo = (tx_input.prev_tx_id, tx_input.output_index)
             self.spent_utxos.add(utxo)
@@ -45,7 +45,7 @@ class Mempool:
 
         for tx in self.transactions:
             if tx.tx_id == tx_id:
-                # Remove spent UTXOs
+                
                 for tx_input in tx.inputs:
                     utxo = (tx_input.prev_tx_id, tx_input.output_index)
                     self.spent_utxos.discard(utxo)
@@ -58,7 +58,7 @@ class Mempool:
         Return top N transactions by fee (highest first)
         """
 
-        # Sort transactions by fee descending
+        
         sorted_txs = sorted(self.transactions, key=lambda tx: tx.fee, reverse=True)
         return sorted_txs[:n]
 
@@ -68,3 +68,4 @@ class Mempool:
         """
         self.transactions.clear()
         self.spent_utxos.clear()
+
