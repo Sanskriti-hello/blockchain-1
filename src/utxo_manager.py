@@ -1,23 +1,19 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from typing import Dict, Tuple, List
 import copy
 
+# manages unspent transaction outputs (utxos)
 class UTXOManager:
-    """
-    Stores UTXOs as:
-    (tx_id, index) -> {"amount": float, "owner": str}
-    """
-
+    # initializes the utxo manager
     def __init__(self):
-        # Core UTXO database
         self.utxo_set: Dict[Tuple[str, int], Dict[str, object]] = {}
 
+    # adds a new utxo
     def add_utxo(self, tx_id: str, index: int, amount: float, owner: str) -> None:
-        """
-        Add a new UTXO to the set.
-        Called when a transaction output is created.
-        """
         if amount <= 0:
-            raise ValueError("UTXO amount must be positive")
+            raise ValueError(f"utxo amount must be positive, got {amount}")
 
         key = (tx_id, index)
         self.utxo_set[key] = {
@@ -25,82 +21,70 @@ class UTXOManager:
             "owner": owner
         }
 
+    # removes a utxo
     def remove_utxo(self, tx_id: str, index: int) -> None:
-        """
-        Remove a UTXO once it is spent.
-        Prevents double-spending.
-        """
         key = (tx_id, index)
         if key not in self.utxo_set:
-            raise KeyError(f"UTXO {key} does not exist or already spent")
+            raise KeyError(f"utxo {key} does not exist or already spent")
 
         del self.utxo_set[key]
 
+    # checks if a utxo exists
     def exists(self, tx_id: str, index: int) -> bool:
-        """
-        Check if a UTXO exists and is unspent. we need to make sure of the validator class
-        Used during transaction validation.
-        """
         return (tx_id, index) in self.utxo_set
 
+    # calculates balance for an owner
     def get_balance(self, owner: str) -> float:
-        """
-        Calculate total balance for an address.
-        Balance = sum of all UTXOs owned.
-        """
         balance = 0.0
         for utxo in self.utxo_set.values():
             if utxo["owner"] == owner:
                 balance += utxo["amount"]
         return balance
     
+    # returns a snapshot of the utxo set
     def get_snapshot(self) -> Dict[Tuple[str, int], Dict[str, object]]:
-        """
-        Return a snapshot of the current UTXO set.
-        Useful for debugging or state inspection.
-        """
-        return copy.deepcopy(self.utxo_set)  
+        return copy.deepcopy(self.utxo_set)
     
+    # loads a utxo set snapshot
     def load_snapshot(self, snapshot: Dict[Tuple[str, int], Dict[str, object]]) -> None:
-
-        """
-        Load a UTXO set snapshot.
-        Useful for restoring state.
-        """
         self.utxo_set = copy.deepcopy(snapshot)
-           
 
+    # returns utxos for a specific owner
     def get_utxos_for_owner(self, owner: str) -> List[Tuple[str, int, float]]:
-        """
-        Return all UTXOs owned by a specific address.
-        Useful for transaction input selection.
-        """
         results = []
         for (tx_id, index), data in self.utxo_set.items():
             if data["owner"] == owner:
                 results.append((tx_id, index, data["amount"]))
         return results
 
+    # gets the amount of a specific utxo
     def get_utxo_amount(self, tx_id: str, index: int) -> float:
-        """
-        Get the amount of a specific UTXO.
-        """
         key = (tx_id, index)
         if key not in self.utxo_set:
-            raise KeyError(f"UTXO {key} does not exist")
+            raise KeyError(f"utxo {key} does not exist")
 
         return self.utxo_set[key]["amount"]
+    
+    # gets the owner of a specific utxo
+    def get_utxo_owner(self, tx_id: str, index: int) -> str:
+        key = (tx_id, index)
+        if key not in self.utxo_set:
+            raise KeyError(f"utxo {key} does not exist")
+        
+        return self.utxo_set[key]["owner"]
 
+    # returns human-readable utxo set
     def __str__(self) -> str:
-        """
-        Human-readable view of the UTXO set.
-        """
         if not self.utxo_set:
-            return "UTXO set is empty."
+            return "utxo set is empty."
 
-        lines = ["Current UTXO Set:"]
-        for (tx_id, index), data in self.utxo_set.items():
+        lines = ["current utxo set:"]
+        for (tx_id, index), data in sorted(self.utxo_set.items()):
             lines.append(
-                f"  ({tx_id}, {index}) -> {data['amount']} BTC owned by {data['owner']}"
+                f"  ({tx_id}, {index}) -> {data['amount']:.8f} btc owned by {data['owner']}"
             )
         return "\n".join(lines)
+    
+    # calculates total supply
+    def get_total_supply(self) -> float:
+        return sum(utxo["amount"] for utxo in self.utxo_set.values())
