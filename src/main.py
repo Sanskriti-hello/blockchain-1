@@ -1,8 +1,8 @@
-from ./utxo_manager import UTXOManager
-from ./mempool import Mempool
-from ./transaction import Transaction, validate_transaction
-from ./block import mine_block
-from t./esting import run_tests
+from utxo_manager import UTXOManager
+from mempool import Mempool
+from transaction import Transaction, validate_transaction
+from block import mine_block
+from ./testing import run_tests
 def main():
     um = UTXOManager()
     mp = Mempool()
