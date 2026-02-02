@@ -4,13 +4,12 @@ class Mempool:
         self.spent_utxos = set()        
         self.max_size = max_size
 
-    def add_transaction(self, tx, utxo_manager) -> (bool, str):
+    def add_transaction(self, tx, utxo_manager) -> tuple[bool, str]:
         """
         Validate and add transaction.
         Return (success, message)
         """
 
-       
         if len(self.transactions) >= self.max_size:
             lowest_fee_tx = min(self.transactions, key=lambda t: t.fee)
             if tx.fee <= lowest_fee_tx.fee:

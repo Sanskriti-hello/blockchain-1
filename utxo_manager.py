@@ -1,4 +1,6 @@
 from typing import Dict, Tuple, List
+import copy
+
 class UTXOManager:
     """
     Stores UTXOs as:
@@ -36,7 +38,7 @@ class UTXOManager:
 
     def exists(self, tx_id: str, index: int) -> bool:
         """
-        Check if a UTXO exists and is unspent.
+        Check if a UTXO exists and is unspent. we need to make sure of the validator class
         Used during transaction validation.
         """
         return (tx_id, index) in self.utxo_set
@@ -51,6 +53,22 @@ class UTXOManager:
             if utxo["owner"] == owner:
                 balance += utxo["amount"]
         return balance
+    
+    def get_snapshot(self) -> Dict[Tuple[str, int], Dict[str, object]]:
+        """
+        Return a snapshot of the current UTXO set.
+        Useful for debugging or state inspection.
+        """
+        return copy.deepcopy(self.utxo_set)  
+    
+    def load_snapshot(self, snapshot: Dict[Tuple[str, int], Dict[str, object]]) -> None:
+
+        """
+        Load a UTXO set snapshot.
+        Useful for restoring state.
+        """
+        self.utxo_set = copy.deepcopy(snapshot)
+           
 
     def get_utxos_for_owner(self, owner: str) -> List[Tuple[str, int, float]]:
         """
@@ -62,6 +80,16 @@ class UTXOManager:
             if data["owner"] == owner:
                 results.append((tx_id, index, data["amount"]))
         return results
+
+    def get_utxo_amount(self, tx_id: str, index: int) -> float:
+        """
+        Get the amount of a specific UTXO.
+        """
+        key = (tx_id, index)
+        if key not in self.utxo_set:
+            raise KeyError(f"UTXO {key} does not exist")
+
+        return self.utxo_set[key]["amount"]
 
     def __str__(self) -> str:
         """

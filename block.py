@@ -18,8 +18,7 @@ def mine_block(
     4. Remove mined transactions from mempool
     """
 
-    print("Mining block ...")
-
+    #
     # Step 1: Select transactions
     selected_txs: List[Dict] = mempool.get_top_transactions(num_txs)
 
