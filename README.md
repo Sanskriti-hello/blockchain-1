@@ -277,18 +277,19 @@ blockchain-1/
 ├── src/
 │   ├── __init__.py
 │   ├── main.py            # Entry point (menu-driven interface)
-│   ├── utxo_manager.py    # UTXO management (Part 1)
-│   ├── transaction.py     # Transaction structure & validation (Part 2)
-│   ├── mempool.py         # Mempool management (Part 3)
-│   └── block.py           # Mining simulation (Part 4)
+│   ├── utxo_manager.py    # UTXO management logic
+│   ├── transaction.py     # Transaction structure & validation
+│   ├── mempool.py         # Mempool management & conflict detection
+│   └── block.py           # Mining simulation & block creation
 │
 ├── test/
 │   ├── __init__.py
-│   └── testing.py         # Test cases for validation & double-spending
+│   └── testing.py         # Comprehensive test suite (10/10 tests)
 │
-├── __pycache__/           # Auto-generated Python cache files
-│
-└── README.md              # Project documentation
+├── main_output.txt        # Sample output from running main.py
+├── tests_output.txt       # Sample output from running testing.py
+├── README.md              # Project documentation
+└── __pycache__/           # Auto-generated Python cache files
 ```
 
 ---
