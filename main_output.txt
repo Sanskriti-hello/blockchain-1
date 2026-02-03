@@ -1,0 +1,157 @@
+
+============================================================
+=== bitcoin transaction simulator ===
+============================================================
+
+initial utxos (genesis block):
+- alice: 50.0 btc
+- bob: 30.0 btc
+- charlie: 20.0 btc
+- david: 10.0 btc
+- eve: 5.0 btc
+
+main menu:
+1. create new transaction
+2. view utxo set
+3. view mempool
+4. mine block
+5. run test scenarios
+6. exit
+
+Enter choice: 1
+
+------------------------------------------------------------
+enter sender: alice
+available balance: 50.0 btc
+enter recipient: bob
+enter amount: 20
+
+creating transaction...
+transaction valid! fee: 0.000 btc
+transaction id: tx_alice_bob_1770119041017_7626
+transaction added to mempool.
+mempool now has 1 transactions.
+
+main menu:
+1. create new transaction
+2. view utxo set
+3. view mempool
+4. mine block
+5. run test scenarios
+6. exit
+
+Enter choice: 1
+
+------------------------------------------------------------
+enter sender: bob
+available balance: 30.0 btc
+enter recipient: eve
+enter amount: 50
+error: insufficient funds
+
+main menu:
+1. create new transaction
+2. view utxo set
+3. view mempool
+4. mine block
+5. run test scenarios
+6. exit
+
+Enter choice: 2
+
+------------------------------------------------------------
+current utxo set
+------------------------------------------------------------
+(genesis, 0) -> 50.000 btc owned by alice
+(genesis, 1) -> 30.000 btc owned by bob
+(genesis, 2) -> 20.000 btc owned by charlie
+(genesis, 3) -> 10.000 btc owned by david
+(genesis, 4) -> 5.000 btc owned by eve
+
+total supply: 115.000 btc
+
+main menu:
+1. create new transaction
+2. view utxo set
+3. view mempool
+4. mine block
+5. run test scenarios
+6. exit
+
+Enter choice: 3
+
+------------------------------------------------------------
+mempool
+------------------------------------------------------------
+transactions: 1
+total fees: 0.00100000 btc
+average fee: 0.00100000 btc
+highest fee: 0.00100000 btc
+lowest fee: 0.00100000 btc
+
+transactions (sorted by fee):
+  tx_alice_bob_1770119041017_7626: 1 in, 2 out, fee=0.00100000 btc
+
+main menu:
+1. create new transaction
+2. view utxo set
+3. view mempool
+4. mine block
+5. run test scenarios
+6. exit
+
+Enter choice: 4
+
+------------------------------------------------------------
+enter miner name: alice
+
+Mining block...
+
+============================================================
+mining block #1
+============================================================
+selected 1 transactions from mempool:
+  1. tx_alice_bob_1770119041017_7626 (fee: 0.00100000 btc)
+
+coinbase created: coinbase_alice_1_1770119095
+miner alice receives 0.00100000 btc in fees
+
+block #1 mined successfully!
+  transactions confirmed: 1
+  total fees: 0.00100000 btc
+  mempool size: 0 transactions remaining
+============================================================
+
+
+main menu:
+1. create new transaction
+2. view utxo set
+3. view mempool
+4. mine block
+5. run test scenarios
+6. exit
+
+Enter choice: 4
+
+------------------------------------------------------------
+enter miner name: bob
+
+Mining block...
+
+============================================================
+mining block #2
+============================================================
+no transactions available for mining.
+mining failed - no transactions available
+
+main menu:
+1. create new transaction
+2. view utxo set
+3. view mempool
+4. mine block
+5. run test scenarios
+6. exit
+
+Enter choice: 6
+
+Exiting simulator...

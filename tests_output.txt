@@ -1,0 +1,149 @@
+============================================================
+UTXO SIMULATOR - COMPREHENSIVE TEST SUITE
+============================================================
+Genesis UTXOs created:
+  Alice: 50.0 BTC
+  Bob: 30.0 BTC
+  Charlie: 20.0 BTC
+  David: 10.0 BTC
+  Eve: 5.0 BTC
+  Total Supply: 115.0 BTC
+
+============================================================
+TEST 1: Basic Valid Transaction
+============================================================
+✓ Transaction valid!
+  Fee: 0.00100000 BTC
+  Inputs: 50.0 BTC from Alice
+  Outputs: 10.0 to Bob, 39.999 to Alice (change)
+  transaction tx_alice_bob_001 added to mempool (fee: 0.00100000 btc)
+Genesis UTXOs created:
+  Alice: 50.0 BTC
+  Bob: 30.0 BTC
+  Charlie: 20.0 BTC
+  David: 10.0 BTC
+  Eve: 5.0 BTC
+  Total Supply: 115.0 BTC
+
+
+============================================================
+TEST 2: Multiple Inputs
+============================================================
+Setting up: Creating two UTXOs for Alice...
+✓ Transaction valid!
+  Fee: 0.00100000 BTC
+  Input 1: 50.0 BTC
+  Input 2: 20.0 BTC
+  Total inputs: 70.0 BTC
+  Output to Bob: 60.0 BTC
+  Change to Alice: 9.999 BTC
+  transaction tx_alice_bob_multi added to mempool (fee: 0.00100000 btc)
+Genesis UTXOs created:
+  Alice: 50.0 BTC
+  Bob: 30.0 BTC
+  Charlie: 20.0 BTC
+  David: 10.0 BTC
+  Eve: 5.0 BTC
+  Total Supply: 115.0 BTC
+
+
+============================================================
+TEST 3: Double-Spend in Same Transaction
+============================================================
+✓ Transaction correctly rejected!
+  Error: double spending detected: utxo ('genesis', 1) used twice in same transaction
+
+============================================================
+TEST 4: Mempool Double-Spend
+============================================================
+TX1: transaction tx_alice_bob_first added to mempool (fee: 0.00100000 btc)
+TX2: invalid transaction: utxo ('genesis', 0) already spent by tx_genesis
+✓ Test passed! TX1 accepted, TX2 rejected (First-Seen Rule)
+
+============================================================
+TEST 5: Insufficient Funds
+============================================================
+✓ Transaction correctly rejected!
+  Error: insufficient funds: inputs=30.00000000 btc, outputs=35.00000000 btc
+
+============================================================
+TEST 6: Negative Amount
+============================================================
+✓ Transaction correctly rejected!
+  Error: output 0 has invalid amount: -5.0 (must be positive)
+
+============================================================
+TEST 7: Zero Fee Transaction
+============================================================
+✓ Transaction valid!
+  Fee: 0.00000000 BTC (zero fee is allowed)
+  transaction tx_eve_zerofee added to mempool (fee: 0.00000000 btc)
+
+============================================================
+TEST 8: Race Attack Simulation
+============================================================
+Merchant TX (low fee): transaction tx_david_merchant_lowfee added to mempool (fee: 0.00100000 btc)
+Attack TX (high fee): invalid transaction: utxo ('genesis', 3) already spent by tx_genesis
+✓ First-Seen Rule enforced! Merchant protected from race attack
+
+============================================================
+TEST 9: Complete Mining Flow
+============================================================
+
+Adding transactions to mempool...
+
+Mempool size before mining: 3
+
+============================================================
+mining block #1
+============================================================
+selected 3 transactions from mempool:
+  1. tx_Alice_Bob_1770118901382_1982 (fee: 0.00100000 btc)
+  2. tx_Charlie_David_1770118901383_4040 (fee: 0.00100000 btc)
+  3. tx_Bob_Eve_1770118901383_4049 (fee: 0.00100000 btc)
+
+coinbase created: coinbase_Miner1_1_1770118901
+miner Miner1 receives 0.00300000 btc in fees
+
+block #1 mined successfully!
+  transactions confirmed: 3
+  total fees: 0.00300000 btc
+  mempool size: 0 transactions remaining
+============================================================
+
+
+✓ Mining successful!
+  Miner balance before: 0.00000000 BTC
+  Miner balance after: 0.00300000 BTC
+  Miner earned: 0.00300000 BTC
+  Mempool size after: 0
+
+============================================================
+TEST 10: Unconfirmed Chain
+============================================================
+TX1: invalid transaction: utxo ('genesis', 0) does not exist or already spent
+
+✓ Unconfirmed chain spending correctly rejected!
+  Error: utxo ('tx_alice_bob_unconfirmed', 0) does not exist or already spent
+
+Design Decision Explanation:
+  - Only confirmed (mined) UTXOs can be spent
+  - This prevents issues with mempool conflicts and chain reorganizations
+  - TX1 must be mined before Bob can spend the outputs
+
+============================================================
+TEST SUMMARY
+============================================================
+Test 1: ✓ PASSED
+Test 2: ✓ PASSED
+Test 3: ✓ PASSED
+Test 4: ✓ PASSED
+Test 5: ✓ PASSED
+Test 6: ✓ PASSED
+Test 7: ✓ PASSED
+Test 8: ✓ PASSED
+Test 9: ✓ PASSED
+Test 10: ✓ PASSED
+
+Total: 10/10 tests passed
+============================================================
